@@ -1,24 +1,28 @@
-version: '3.8'
-
+#version: '3.8'
 services:
   jenkins:
     networks:
       - cicd-pipelines
-    image: jenkins/jenkins:lts
+    image: jenkins/jenkins:alpine-jdk21
     privileged: true
     user: root
     ports:
-      - 8080:8080
+      - 8181:8080
       - 50000:50000
     container_name: jenkins
     volumes:
       - /home/${myname}/Documents/secure-cicd-pipeline/jenkins_compose/jenkins_configuration:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sockss
+    environment:
+      - TZ=Asia/Manila
 
   jenkins-agent:
     networks:
       - cicd-pipelines
+    ports:
+      - 4243:22
     image: jenkins/ssh-agent:alpine-jdk17
-
+    environment:
+      - TZ=Asia/Manila
 networks:
   cicd-pipelines: {}
